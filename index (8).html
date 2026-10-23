@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClearDollar: Free Mortgage, Salary and Debt Payoff Calculators</title>
+<meta name="description" content="Free US money calculators with plain-English guides: mortgage payment, salary to hourly pay, and debt payoff time.">
+<style>
+:root{--bg:#f4f7f6;--surface:#ffffff;--ink:#14231f;--muted:#51625d;--line:#d5dfdb;--accent:#0f6b57;--accent-ink:#ffffff;--warn:#9a3412;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1815;--surface:#16231f;--ink:#e8f1ee;--muted:#9bb0a9;--line:#2a3d37;--accent:#4fd1ad;--accent-ink:#06201a;--warn:#fdba74}}
+:root[data-theme="dark"]{--bg:#0e1815;--surface:#16231f;--ink:#e8f1ee;--muted:#9bb0a9;--line:#2a3d37;--accent:#4fd1ad;--accent-ink:#06201a;--warn:#fdba74}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+header{padding:28px 0 8px}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:1.5rem;font-weight:700;letter-spacing:-.01em}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,6vw,3rem);line-height:1.1;margin:18px 0 10px;letter-spacing:-.02em}
+.lead{color:var(--muted);max-width:56ch;margin:0 0 22px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+nav button{font:inherit;font-weight:600;padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:.92rem;margin:0 0 14px}
+input{display:block;width:100%;margin-top:6px;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.out{border-left:3px solid var(--accent);padding-left:20px;align-self:center}
+.big{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.2rem,8vw,3.2rem);font-weight:700;line-height:1.1}
+.sub{color:var(--muted);margin:2px 0 14px}
+.row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:8px 0;font-size:.95rem}
+.row b{font-variant-numeric:tabular-nums}
+.err{color:var(--warn);font-weight:600}
+[hidden]{display:none!important}
+article{margin-top:34px;max-width:68ch}
+article h2{font-family:Georgia,"Times New Roman",serif;font-size:1.6rem;line-height:1.2;margin:0 0 8px}
+article h3{margin:22px 0 6px;font-size:1.05rem}
+article p,article li{color:var(--ink)}
+.note{font-size:.88rem;color:var(--muted);border-top:1px solid var(--line);margin-top:40px;padding:16px 0 32px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="brand">ClearDollar</div>
+<h1>Money math, without the guesswork</h1>
+<p class="lead">Free calculators for US home loans, paychecks and debt, with short guides that explain what the numbers mean.</p>
+<nav role="tablist" aria-label="Calculators">
+<button role="tab" data-tab="mortgage" aria-selected="true">Mortgage</button>
+<button role="tab" data-tab="hourly" aria-selected="false">Salary to hourly</button>
+<button role="tab" data-tab="debt" aria-selected="false">Debt payoff</button>
+<button role="tab" data-tab="guides" aria-selected="false">Guides</button>
+</nav>
+</header>
+<main>
+
+<section class="panel" id="mortgage">
+<div class="grid">
+<div>
+<label>Home price ($)<input id="m_price" type="number" inputmode="decimal" value="400000" min="0"></label>
+<label>Down payment (%)<input id="m_down" type="number" inputmode="decimal" value="20" min="0" max="100"></label>
+<label>Interest rate (% per year)<input id="m_rate" type="number" inputmode="decimal" value="6.5" min="0" step="0.01"></label>
+<label>Loan term (years)<input id="m_years" type="number" inputmode="numeric" value="30" min="1" max="40"></label>
+</div>
+<div class="out">
+<div class="sub">Monthly principal and interest</div>
+<div class="big" id="m_pmt">$0</div>
+<div class="row"><span>Loan amount</span><b id="m_loan"></b></div>
+<div class="row"><span>Total interest over the loan</span><b id="m_int"></b></div>
+<div class="row"><span>Total paid back</span><b id="m_tot"></b></div>
+<p class="sub">Taxes, insurance and HOA fees are not included.</p>
+</div>
+</div>
+</section>
+
+<section class="panel" id="hourly" hidden>
+<div class="grid">
+<div>
+<label>Annual salary ($)<input id="h_sal" type="number" inputmode="decimal" value="60000" min="0"></label>
+<label>Hours per week<input id="h_hrs" type="number" inputmode="decimal" value="40" min="1" max="100"></label>
+</div>
+<div class="out">
+<div class="sub">Hourly pay (before taxes)</div>
+<div class="big" id="h_hour">$0</div>
+<div class="row"><span>Weekly</span><b id="h_week"></b></div>
+<div class="row"><span>Every two weeks</span><b id="h_bi"></b></div>
+<div class="row"><span>Monthly</span><b id="h_mo"></b></div>
+<p class="sub">Assumes 52 paid weeks a year. These are gross amounts, not take-home pay.</p>
+</div>
+</div>
+</section>
+
+<section class="panel" id="debt" hidden>
+<div class="grid">
+<div>
+<label>Balance owed ($)<input id="d_bal" type="number" inputmode="decimal" value="8000" min="0"></label>
+<label>Interest rate, APR (%)<input id="d_apr" type="number" inputmode="decimal" value="22" min="0" step="0.01"></label>
+<label>Monthly payment ($)<input id="d_pay" type="number" inputmode="decimal" value="300" min="0"></label>
+</div>
+<div class="out">
+<div class="sub">Time to pay it off</div>
+<div class="big" id="d_time">0</div>
+<div id="d_err" class="err" hidden></div>
+<div class="row"><span>Total interest</span><b id="d_int"></b></div>
+<div class="row"><span>Total paid</span><b id="d_tot"></b></div>
+<p class="sub">Estimate assuming a fixed rate and no new charges.</p>
+</div>
+</div>
+</section>
+
+<section id="guides" hidden>
+<article>
+<h2>How your mortgage payment is calculated</h2>
+<p>Your monthly payment is set by three things: the amount you borrow, the interest rate and the length of the loan. A lender spreads the loan across every month of the term so each payment is the same size.</p>
+<h3>Why the first years feel slow</h3>
+<p>Early payments are mostly interest, because interest is charged on the full balance. Each month a little more goes to principal, so the balance falls faster over time. That is why a 30-year loan costs much more in total interest than a 15-year loan, even though the monthly payment is lower.</p>
+<h3>What the calculator leaves out</h3>
+<p>Property tax, homeowners insurance, HOA dues and private mortgage insurance (usually required with less than 20% down) are added on top. Ask your lender for a full estimate before you decide what you can afford.</p>
+<p>Official guidance: <a href="https://www.consumerfinance.gov/owning-a-home/" rel="noopener">Consumer Financial Protection Bureau, Owning a Home</a>.</p>
+</article>
+<article>
+<h2>Debt snowball or avalanche?</h2>
+<p>Both methods work the same way: pay the minimum on every debt, then put all extra money toward one target debt until it is gone.</p>
+<h3>Avalanche</h3>
+<p>Target the debt with the highest interest rate first. This costs the least interest overall.</p>
+<h3>Snowball</h3>
+<p>Target the smallest balance first. You pay interest slightly longer, but clearing whole debts early keeps many people motivated.</p>
+<h3>Which should you pick?</h3>
+<p>If you will stick with either one, the avalanche saves more money. If you need early wins to keep going, the snowball is a fine choice. Use the debt payoff calculator to see how an extra $50 a month changes your timeline.</p>
+</article>
+</section>
+
+</main>
+<p class="note">ClearDollar provides general information and estimates only. It is not financial, tax or legal advice. Check results with a licensed professional before making decisions.</p>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var usd=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+var usd2=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
+var num=function(i){var v=parseFloat($(i).value);return isFinite(v)?v:0};
+
+function mortgage(){
+  var price=num('m_price'),down=num('m_down'),rate=num('m_rate'),yrs=num('m_years');
+  var loan=Math.max(price*(1-down/100),0),n=Math.round(yrs*12),r=rate/1200,pmt=0;
+  if(n>0&&loan>0){pmt=r>0?loan*r/(1-Math.pow(1+r,-n)):loan/n}
+  var tot=pmt*n;
+  $('m_pmt').textContent=usd2.format(pmt);
+  $('m_loan').textContent=usd.format(loan);
+  $('m_int').textContent=usd.format(Math.max(tot-loan,0));
+  $('m_tot').textContent=usd.format(tot);
+}
+function hourly(){
+  var s=num('h_sal'),h=num('h_hrs');
+  $('h_hour').textContent=usd2.format(h>0?s/(52*h):0);
+  $('h_week').textContent=usd2.format(s/52);
+  $('h_bi').textContent=usd2.format(s/26);
+  $('h_mo').textContent=usd2.format(s/12);
+}
+function debt(){
+  var b=num('d_bal'),r=num('d_apr')/1200,p=num('d_pay'),err=$('d_err');
+  err.hidden=true;
+  if(b<=0){$('d_time').textContent='0 months';$('d_int').textContent='$0';$('d_tot').textContent='$0';return}
+  if(p<=b*r||p<=0){
+    err.hidden=false;
+    err.textContent='Your payment must be higher than the monthly interest ('+usd2.format(b*r)+') or the balance will never go down.';
+    $('d_time').textContent='Never';$('d_int').textContent='n/a';$('d_tot').textContent='n/a';return;
+  }
+  var m=r>0?-Math.log(1-b*r/p)/Math.log(1+r):b/p;
+  var total=p*m,mo=Math.ceil(m),y=Math.floor(mo/12),rm=mo%12;
+  $('d_time').textContent=(y>0?y+(y===1?' year ':' years '):'')+(rm>0||y===0?rm+(rm===1?' month':' months'):'');
+  $('d_int').textContent=usd.format(Math.max(total-b,0));
+  $('d_tot').textContent=usd.format(total);
+}
+var calc={mortgage:mortgage,hourly:hourly,debt:debt};
+document.querySelectorAll('input').forEach(function(el){
+  el.addEventListener('input',function(){var s=el.closest('section');if(calc[s.id])calc[s.id]()});
+});
+
+var tabs=document.querySelectorAll('nav button'),ids=['mortgage','hourly','debt','guides'];
+function show(id){
+  if(ids.indexOf(id)<0)id='mortgage';
+  ids.forEach(function(x){$(x).hidden=(x!==id)});
+  tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false')});
+}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab);try{location.hash=b.dataset.tab}catch(e){}})});
+window.addEventListener('hashchange',function(){show(location.hash.slice(1))});
+mortgage();hourly();debt();
+show(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
